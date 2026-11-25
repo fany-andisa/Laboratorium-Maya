@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab Maya Kelas 7: Belajar Rumus Spreadsheet (SUM, MIN, MAX, COUNT, AVERAGE, IF)</title>
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body { margin: 0; padding: 14px; background: #f1f5f9; color: #1e293b; }
+    .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 18px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    h1 { font-size: 1.35rem; margin: 0 0 8px 0; color: #0f172a; }
+    .subtitle { font-size: 0.9rem; color: #475569; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+    
+    /* Mode Switcher */
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tab-btn { padding: 8px 14px; border: 2px solid #cbd5e1; background: #f8fafc; color: #334155; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    .tab-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+    /* Spreadsheet Area */
+    .sheet-wrapper { overflow-x: auto; margin-bottom: 16px; border: 1px solid #94a3b8; border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; min-width: 520px; }
+    th, td { border: 1px solid #cbd5e1; padding: 7px 10px; font-size: 0.9rem; }
+    th { background: #e2e8f0; color: #1e293b; text-align: center; font-weight: 700; }
+    .row-num { background: #e2e8f0; text-align: center; font-weight: 700; width: 38px; color: #475569; }
+    .cell-input { width: 100%; border: 1px solid #93c5fd; background: #eff6ff; padding: 4px 6px; border-radius: 4px; text-align: right; font-weight: 600; font-size: 0.9rem; }
+    .cell-input:focus { outline: 2px solid #2563eb; background: #fff; }
+    .badge-lulus { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 12px; font-weight: 700; font-size: 0.8rem; display: inline-block; }
+    .badge-remedial { background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 12px; font-weight: 700; font-size: 0.8rem; display: inline-block; }
+
+    /* Formula Playground */
+    .formula-bar { background: #0f172a; color: #f8fafc; padding: 14px; border-radius: 8px; margin-bottom: 16px; }
+    .formula-bar label { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .formula-input-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .formula-input { flex: 1; min-width: 200px; padding: 9px 12px; border-radius: 6px; border: none; font-family: monospace; font-size: 1rem; font-weight: bold; color: #0f172a; }
+    .btn-run { background: #16a34a; color: #fff; border: none; padding: 9px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
+    .btn-run:hover { background: #15803d; }
+    .result-display { margin-top: 10px; padding: 10px; background: #1e293b; border-radius: 6px; font-family: monospace; font-size: 0.95rem; border-left: 4px solid #38bdf8; }
+
+    /* Quick Formula Buttons */
+    .quick-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .q-btn { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.82rem; font-weight: 700; cursor: pointer; }
+    .q-btn:hover { background: #bae6fd; }
+
+    /* Cards & Mission */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 650px) { .grid-2 { grid-template-columns: 1fr; } }
+    .card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 8px; }
+    .card h3 { margin: 0 0 8px 0; font-size: 1rem; color: #0f172a; }
+    .guide-list { margin: 0; padding-left: 18px; font-size: 0.88rem; line-height: 1.6; }
+    .mission-box { background: #fefce8; border: 1px solid #fde047; padding: 14px; border-radius: 8px; }
+    .mission-item { margin-bottom: 10px; font-size: 0.88rem; padding-bottom: 8px; border-bottom: 1px dashed #eab308; }
+    .mission-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .status-done { color: #15803d; font-weight: bold; }
+    .kkm-control { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; background: #eff6ff; padding: 8px 12px; border-radius: 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🧮 Lab Maya Informatika Kelas 7: Eksplorasi Rumus Dasar</h1>
+  <div class="subtitle">Pelajari cara kerja <strong>SUM, MIN, MAX, COUNT, AVERAGE,</strong> dan <strong>IF</strong> langsung dari HP atau komputer tanpa aplikasi tambahan!</div>
+
+  <div class="kkm-control">
+    <span>🎯 <strong>Atur Batas Nilai Tuntas (KKM) untuk Rumus IF:</strong></span>
+    <input type="number" id="kkmInput" value="75" min="0" max="100" style="width: 65px; padding: 4px; font-weight: bold; text-align: center;" onchange="renderSheet()">
+    <span style="color:#475569; font-size:0.82rem;">(Ubah angka KKM ini untuk melihat kolom D berubah otomatis!)</span>
+  </div>
+
+  <!-- Tabel Mini Spreadsheet -->
+  <div class="sheet-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th class="row-num"></th>
+          <th>A (Nama Siswa)</th>
+          <th>B (Nilai Ulangan)</th>
+          <th>C (Keterangan)</th>
+          <th>D (Hasil Rumus: =IF(B2>=$KKM,"Lulus","Remedial"))</th>
+        </tr>
+      </thead>
+      <tbody id="sheetBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Bilah Rumus Interaktif -->
+  <div class="formula-bar">
+    <label>Ketik Rumus atau Klik Tombol Contoh Rumus di Bawah:</label>
+    <div class="quick-btns">
+      <button class="q-btn" onclick="setFormula('=SUM(B2:B7)')">=SUM(B2:B7)</button>
+      <button class="q-btn" onclick="setFormula('=AVERAGE(B2:B7)')">=AVERAGE(B2:B7)</button>
+      <button class="q-btn" onclick="setFormula('=MIN(B2:B7)')">=MIN(B2:B7)</button>
+      <button class="q-btn" onclick="setFormula('=MAX(B2:B7)')">=MAX(B2:B7)</button>
+      <button class="q-btn" onclick="setFormula('=COUNT(B2:B7)')">=COUNT(B2:B7)</button>
+      <button class="q-btn" onclick="setFormula('=IF(B2>=75,&quot;Lulus&quot;,&quot;Remedial&quot;)')">=IF(B2>=75,"Lulus","Remedial")</button>
+    </div>
+    <div class="formula-input-group">
+      <input type="text" id="formulaInput" class="formula-input" value="=SUM(B2:B7)" placeholder="Contoh: =SUM(B2:B7)">
+      <button class="btn-run" onclick="evaluateFormula()">▶ Jalankan Rumus</button>
+    </div>
+    <div class="result-display" id="formulaOutput">
+      Hasil: <strong>455</strong> — <em>Menjumlahkan seluruh angka dari sel B2 sampai B7.</em>
+    </div>
+  </div>
+
+  <!-- Panduan & Misi Siswa -->
+  <div class="grid-2">
+    <div class="card">
+      <h3>📖 Kamus Mini 6 Rumus Wajib</h3>
+      <ul class="guide-list">
+        <li><strong>SUM:</strong> Menjumlahkan semua angka dalam rentang sel.</li>
+        <li><strong>AVERAGE:</strong> Menghitung nilai rata-rata.</li>
+        <li><strong>MIN:</strong> Mencari angka paling kecil (terendah).</li>
+        <li><strong>MAX:</strong> Mencari angka paling besar (tertinggi).</li>
+        <li><strong>COUNT:</strong> Menghitung <em>banyaknya sel yang berisi angka</em> (sel kosong atau teks tidak ikut dihitung!).</li>
+        <li><strong>IF:</strong> Menguji kondisi logika (Jika benar hasilnya A, jika salah hasilnya B).</li>
+      </ul>
+    </div>
+
+    <div class="mission-box">
+      <h3>🏆 Misi Eksplorasi Siswa (Coba Praktikkan!)</h3>
+      <div class="mission-item" id="m1">
+        <strong>Misi 1 (Uji COUNT):</strong> Hapus nilai milik <em>Dina (B5)</em> hingga kosong, lalu jalankan rumus <code>=COUNT(B2:B7)</code>. Berapa hasilnya? Mengapa berkurang?
+      </div>
+      <div class="mission-item" id="m2">
+        <strong>Misi 2 (Uji MAX & MIN):</strong> Ubah nilai <em>Budi (B3)</em> menjadi <strong>100</strong>. Jalankan <code>=MAX(B2:B7)</code> untuk memastikan nilai tertinggi berubah.
+      </div>
+      <div class="mission-item" id="m3">
+        <strong>Misi 3 (Uji Logika IF):</strong> Ubah batas KKM di bagian atas menjadi <strong>80</strong>. Amati siswa mana saja di Kolom D yang statusnya berubah menjadi <em>Remedial</em>!
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const students = [
+    { row: 2, name: "Ani", score: 85, note: "Hadir" },
+    { row: 3, name: "Budi", score: 65, note: "Hadir" },
+    { row: 4, name: "Citra", score: 90, note: "Hadir" },
+    { row: 5, name: "Dina", score: 70, note: "Hadir" },
+    { row: 6, name: "Eko", score: 75, note: "Hadir" },
+    { row: 7, name: "Fajar", score: 70, note: "Hadir" }
+  ];
+
+  function renderSheet() {
+    const tbody = document.getElementById('sheetBody');
+    const kkm = Number(document.getElementById('kkmInput').value) || 0;
+    tbody.innerHTML = '';
+
+    students.forEach((s, idx) => {
+      const hasScore = s.score !== "" && s.score !== null && !isNaN(Number(s.score));
+      const numScore = hasScore ? Number(s.score) : 0;
+      const statusHtml = !hasScore 
+        ? '<span style="color:#64748b; font-style:italic;">(Kosong)</span>'
+        : (numScore >= kkm 
+            ? '<span class="badge-lulus">Lulus</span>' 
+            : '<span class="badge-remedial">Remedial</span>');
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="row-num">${s.row}</td>
+        <td>${s.name}</td>
+        <td><input type="number" class="cell-input" value="${s.score}" placeholder="Kosong" oninput="updateScore(${idx}, this.value)"></td>
+        <td style="text-align:center; color:#475569;">${s.note}</td>
+        <td style="text-align:center;">${statusHtml}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+    evaluateFormula();
+  }
+
+  function updateScore(idx, val) {
+    students[idx].score = val === "" ? "" : Number(val);
+    renderSheet();
+  }
+
+  function setFormula(f) {
+    document.getElementById('formulaInput').value = f;
+    evaluateFormula();
+  }
+
+  function getRangeValues(startRow, endRow) {
+    const vals = [];
+    for (let r = startRow; r <= endRow; r++) {
+      const st = students.find(s => s.row === r);
+      if (st && st.score !== "" && st.score !== null && !isNaN(Number(st.score))) {
+        vals.push(Number(st.score));
+      }
+    }
+    return vals;
+  }
+
+  function evaluateFormula() {
+    const raw = document.getElementById('formulaInput').value.trim();
+    const out = document.getElementById('formulaOutput');
+    const upper = raw.toUpperCase();
+
+    if (!upper.startsWith('=')) {
+      out.innerHTML = `<span style="color:#f87171;">⚠️ Ingat! Setiap rumus di aplikasi pengolah angka wajib diawali tanda sama dengan (<strong>=</strong>).</span>`;
+      return;
+    }
+
+    // Match SUM, AVERAGE, MIN, MAX, COUNT with B2:B7 or subset B2:B7
+    const rangeMatch = upper.match(/^=(SUM|AVERAGE|MIN|MAX|COUNT)\(B([2-7]):B([2-7])\)$/);
+    if (rangeMatch) {
+      const fn = rangeMatch[1];
+      const r1 = Math.min(Number(rangeMatch[2]), Number(rangeMatch[3]));
+      const r2 = Math.max(Number(rangeMatch[2]), Number(rangeMatch[3]));
+      const vals = getRangeValues(r1, r2);
+
+      if (vals.length === 0 && fn !== 'COUNT') {
+        out.innerHTML = `Hasil: <strong>0</strong> — <em>Tidak ada data angka pada rentang sel tersebut.</em>`;
+        return;
+      }
+
+      let res = 0;
+      let desc = "";
+      if (fn === 'SUM') {
+        res = vals.reduce((a, b) => a + b, 0);
+        desc = `Menjumlahkan ${vals.length} sel berisi angka dari B${r1} sampai B${r2}.`;
+      } else if (fn === 'AVERAGE') {
+        const sum = vals.reduce((a, b) => a + b, 0);
+        res = (sum / vals.length).toFixed(2);
+        desc = `Rata-rata dari ${vals.length} sel angka (Total ${sum} dibagi ${vals.length}).`;
+      } else if (fn === 'MIN') {
+        res = Math.min(...vals);
+        desc = `Nilai terkecil di antara sel B${r1} sampai B${r2}.`;
+      } else if (fn === 'MAX') {
+        res = Math.max(...vals);
+        desc = `Nilai terbesar di antara sel B${r1} sampai B${r2}.`;
+      } else if (fn === 'COUNT') {
+        res = vals.length;
+        desc = `Menghitung jumlah sel yang terisi ANGKA saja dari B${r1} sampai B${r2} (sel kosong diabaikan).`;
+      }
+
+      out.innerHTML = `Hasil: <strong style="color:#4ade80; font-size:1.1rem;">${res}</strong> — <em>${desc}</em>`;
+      return;
+    }
+
+    // Match IF formula e.g. =IF(B2>=75,"Lulus","Remedial")
+    const ifMatch = raw.match(/^=IF\(\s*B([2-7])\s*(>=|<=|>|<|=)\s*(\d+)\s*,\s*"([^"]*)"\s*,\s*"([^"]*)"\s*\)$/i);
+    if (ifMatch) {
+      const rowNum = Number(ifMatch[1]);
+      const op = ifMatch[2];
+      const target = Number(ifMatch[3]);
+      const trueText = ifMatch[4];
+      const falseText = ifMatch[5];
+
+      const st = students.find(s => s.row === rowNum);
+      const val = (st && st.score !== "") ? Number(st.score) : 0;
+
+      let cond = false;
+      if (op === '>=') cond = val >= target;
+      else if (op === '<=') cond = val <= target;
+      else if (op === '>') cond = val > target;
+      else if (op === '<') cond = val < target;
+      else if (op === '=') cond = val === target;
+
+      const resultText = cond ? trueText : falseText;
+      const logicExplain = cond 
+        ? `Karena nilai ${st.name} (B${rowNum} = ${val}) MEMENUHI syarat (${op} ${target}), maka hasilnya "${trueText}".`
+        : `Karena nilai ${st.name} (B${rowNum} = ${val}) TIDAK memenuhi syarat (${op} ${target}), maka hasilnya "${falseText}".`;
+
+      out.innerHTML = `Hasil: <strong style="color:#4ade80; font-size:1.1rem;">"${resultText}"</strong> — <em>${logicExplain}</em>`;
+      return;
+    }
+
+    out.innerHTML = `<span style="color:#fbbf24;">💡 Format rumus belum dikenali. Gunakan pola seperti <code>=SUM(B2:B7)</code> atau <code>=IF(B2>=75,"Lulus","Remedial")</code>.</span>`;
+  }
+
+  renderSheet();
+</script>
+</body>
+</html>
